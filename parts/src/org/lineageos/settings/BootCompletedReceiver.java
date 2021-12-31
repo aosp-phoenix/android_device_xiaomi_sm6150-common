@@ -20,10 +20,12 @@ package org.lineageos.settings;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.util.Log;
 
 import org.lineageos.settings.doze.DozeUtils;
 import org.lineageos.settings.refreshrate.RefreshUtils;
+import org.lineageos.settings.thermal.ThermalUtils;
 
 public class BootCompletedReceiver extends BroadcastReceiver {
     private static final boolean DEBUG = false;
@@ -37,5 +39,13 @@ public class BootCompletedReceiver extends BroadcastReceiver {
 
         // Refresh Rate
         RefreshUtils.startService(context);
+        Log.d(TAG, "Received intent: " + intent.getAction());
+        if (!intent.getAction().equals(Intent.ACTION_LOCKED_BOOT_COMPLETED)) {
+            return;
+        }
+
+        Log.i(TAG, "Boot completed, starting services");
+	DozeUtils.onBootCompleted(context);
+        ThermalUtils.startService(context);
     }
 }
